@@ -1,9 +1,7 @@
 # k8s-repo  spiekbriefje
 
 
-Important info: At the start of the presentation you will be assigned a student number.  L
-
-Vm setup: Kubernetes Linux DisciplVM 5.0.0-1027-azure #29~18.04.1-Ubuntu 
+## Vm setup: Kubernetes Linux DisciplVM 5.0.0-1027-azure #29~18.04.1-Ubuntu 
           SMP Mon Nov 25 21:18:57 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
 
 IP:     discipl.westeurope.cloudapp.azure.com (51.136.24.239) 
@@ -47,24 +45,36 @@ Last login: Sun Dec 15 17:30:47 2019 from 86.86.102.241
  ## Kubectl, onze beste vriend (veel voorkomende commando's)
  
  `kubectl [command] [TYPE] [NAME] [flags] `
- `get [pod|service|deployment|and more...] `
- `describe [pod|service|deployment|and more...] `
- `exec -ti podname – command `
- `logs podname (-f for keeping log open) `
- `create –f filename `
- `delete –f filename  `
+
+`get [pod|service|deployment|and more...] `
+
+`describe [pod|service|deployment|and more...] `
+
+`exec -ti podname – command `
+
+`logs podname (-f for keeping log open) `
+
+`create –f filename `
+
+`delete –f filename  `
  
  volledige overzicht blader naar  https://kubernetes.io/docs/reference/kubectl/overview/
  
  ## Laten we een paar veelgebruikte kubectl-opdrachten uitvoeren
  
-kubctl get namespaces 
-kubectl get pod –-all-namespaces –o wide 
-kubectl get pod –n kube-system 
-kubectl get service --all-namespaces –o wide 
-kubectl get service -n kube-system 
-kubectl describe pod -n kube-system coredns-... 
-kubectl describe service -n kube-system coredns 
+`kubctl get namespaces `
+
+`kubectl get pod –-all-namespaces –o wide `
+
+`kubectl get pod –n kube-system `
+
+`kubectl get service --all-namespaces –o wide `
+
+`kubectl get service -n kube-system `
+
+`kubectl describe pod -n kube-system coredns-... `
+
+`kubectl describe service -n kube-system coredns `
 
 Beetje geavanceerder ..
 
@@ -72,9 +82,11 @@ Beetje geavanceerder ..
 
 
  dashboard under contruction
- https://discipl.westeurope.cloudapp.azure.com 
+
+https://discipl.westeurope.cloudapp.azure.com 
  
- 
+## mysql probeersel 
+````
 wijzig  the mysql configfile 
 Browse to ~/masterclass/mysql 
 Generate the hash for your password (choose your own password) 
@@ -87,24 +99,28 @@ data:
 
 Save the file!  
 
-## Start mysql in Kubernetes 
+
+Start mysql in Kubernetes 
+
 kubectl create -f mysql.yaml kubectl get pod -n boscp08  (where -n is the name of your namespace)
 kubectl get service -n student12 
 Create your database (Modify the password if you picked your own): 
 cat start.sql| kubectl -n student12 exec $(kubectl get pod -n student12 -o name | cut -d/ -f2- | grep mysql) -ti -- mysql -u root --password=ThisIsCool 
 
 If you got the output “unable to use a TTY” you have been successful. kubectl -n student12 logs $(kubectl get pod -n student12-o name | cut -d/ -f2- | grep mysql)
-
+````
 
 
 # Creating docker-container of the app 
-## Browse to the docker directory: 
+
+## BUILD Browse to the docker directory: 
 
 `cd ~/Project/scratch/virtual-insanity/webapp/docker `
 Build the container (mind the period, it’s part of the command): 
+
 `docker build -t webapp12:1 .`
 
-## Test the container: 
+## RUN Test the container: 
 
 `docker run –it --rm webapp12:1`
 
@@ -113,6 +129,38 @@ Press CTRL+C and run Bash in the docker:
 `docker run -it --rm webapp12:1 /bin/bashPress `
 
 CTRL+D to exit the container...
+
+
+##  SHIP
+
+Upload webapp to the local registry 
+
+docker login kube-registry.kube-system.svc.cluster.local User : admin Password : test12345 
+
+`kubectl create secret docker-registry webapp --docker-server=kube-registry.kube-system.svc.cluster.local --docker-username=admin --docker-password=test12345 --docker-email=bosch.peter@icloud.com -n boscp08`
+
+`docker tag webapp12:1 kube-registry.kube-system.svc.cluster.local/webapp12:1docker push kube-registry.kube-system.svc.cluster.local/webapp12:1`
+
+
+https://10.133.254.59/v2/_catalog 
+https:// 10.133.254.59/v2/webapp12/tags/listDeploy 
+
+
+## DEPLOY webapp to Kubernetes
+
+`kubectl create -f ~/masterclass/webapp/webapp.yaml `
+
+`kubectl get pod -n boscp08`
+
+`kubectl describe pod -n boscp08`
+`kubectl logs -n boscp08 $(kubectl get pod -n boscp08 -o name| cut -d/ -f2- | grep webapp) -f`
+
+Zodra het http: // localhost: 8080 in de terminal afdrukt, is uw toepassing actief.
+Druk op CTRL + C om te stoppen met het volgen van het logboek. 
+App wordt uitgevoerd -
+
+## Time to test! Find the load balancer (hint: look at services*) 
+
 
 
 
