@@ -159,7 +159,9 @@ Zodra het http: // localhost: 8080 in de terminal afdrukt, is uw toepassing acti
 Druk op CTRL + C om te stoppen met het volgen van het logboek. 
 App wordt uitgevoerd -
 
-## Time to test! Find the load balancer (hint: look at services*) 
+## Tijd om te testen! Vind de load balancer (hint: kijk naar services *)
+
+
 
 
 
