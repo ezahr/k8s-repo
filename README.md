@@ -1,6 +1,14 @@
 # k8s-repo  spiekbriefje
 
+## Kubernetes objecten maken
 
+Om de applicatie straks op het Kubernetes platform te laten draaien, moeten een aantal Kubernetes objecten gemaakt worden. Een Kubernetes object kan aangemaakt worden door een beschrijving van dat object in een tekstbestand op te nemen, ook wel een [.yaml file](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/) genoemd - en deze straks in de GitLab CI/CD pipeline daadwerkelijk toe te passen. Omdat we in deze tutorial niet een hele Kubernetes cursus kunnen geven, adviseren wij je om eens een kijkje te nemen op https://www.kubernetes.io. Voor deze tutorial is het echter voldoende dat je de volgende drie objecten kent:
+
+ - Pod: de laagste abstractie-laag om een containers heen. Meestal heeft een pod één container, maar het is ook mogelijk om meerdere containers aan een pod toe te voegen. De functie van de pod is eigenlijk puur het doorsturen van acties voor de container. Omdat pods worden gedefinieerd middels een deployment, hoeven we niet een aparte yaml file te maken voor een pod.
+ - Deployment: de middelste abstractie-laag in de container-virtualisatie van Kubernetes. Deployments regelen alles met betrekking tot scaling en monitoring van pods. Als een pod faalt, zorgt de deployment ervoor dat er een nieuwe wordt opgespind. Up- en down-scaling gebeurt ook hier. Deployments kunnen verschillende soorten pods hebben, maar over het algemeen is het beter om dit per deployment bij één type te houden. Dit komt de beheersbaarheid en overzichtelijkheid ten goede.
+ - Service: de hoogste abstractie-laag van de container-virtualisatie. Services kunnen worden gebruikt om communicatie te faciliteren tussen deployments, en om communicatie van buitenaf mogelijk te maken (port forwarding bijvoorbeeld) via een Ingress (zie hierna). Wanneer er vanuit een pod gecommuniceerd wordt naar een andere container, gaat dit dus altijd via een service.
+ - Ingress: Ingress is een methode om http– en https-services te kunnen bereiken vanaf een externe locatie, van buiten het Kubernetes cluster. Binnen de Logius Private Cloud hebben wij een zogenaamde "Ingress Controller" geïnstalleerd, die het cluster in staat stelt om Ingress objecten die door jou worden aangemaakt te herkennen. Specifiek maken wij gebruik van de Nginx Ingress Controller.
+ 
 ## Vm setup: Kubernetes Linux DisciplVM 5.0.0-1027-azure #29~18.04.1-Ubuntu 
           SMP Mon Nov 25 21:18:57 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
 
