@@ -70,7 +70,7 @@ Last login: Sun Dec 15 17:30:47 2019 from 86.86.102.241
  
  ## Laten we een paar veelgebruikte kubectl-opdrachten uitvoeren
  
-`kubctl get namespaces `
+`kubectl get namespaces `
 
 `kubectl get pod –-all-namespaces –o wide `
 
